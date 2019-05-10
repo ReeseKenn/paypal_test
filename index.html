@@ -11,6 +11,97 @@
     <div id="paypal-button-container"></div>
 
     <script>
-        paypal.Buttons().render('#paypal-button-container');
-    </script>
+        paypal.Buttons({
+          createOrder: function(data, actions) {
+            // Set up the transaction
+            return actions.order.create({
+              purchase_units: [{
+                amount: {
+                  currency_code:"USD",
+                  value: '0.01'
+                },
+                payee:{
+                    email_address:"yanbaorui1997-facilitator@163.com"
+                }
+              }],
+              payer: {
+                name: {
+                    given_name: "John",
+                    surname: "Doe"
+                },
+                email_address: "yanbaorui1997-buyer@163.com",//默认登录账号
+                // payer_id: "QYR5Z8XDVJNXQ"
+                // phone:{
+                //     phone_type: MOBILE,
+                //     phone_number: {
+                //         national_number: "12345678910"
+                //     }
+                // }
+              },
+            //   shipping:{
+            //       name:{
+            //           full_name:"John Doe"
+            //       },
+            //       address:{
+            //         address_line_1:"173 Drury Lane"
+            //       }
+            //   },
+              shipping: {
+                address: {
+                address_line_1: "2211 N First Street",
+                address_line_2: "Building 17",
+                admin_area_2: "San Jose",
+                admin_area_1: "CA",
+                postal_code: "95131",
+                country_code: "US"
+                }
+              },
+              payments: {
+                authorizations: [
+                    {
+                        id: "0AW2184448108334S",
+                        status: "CREATED",
+                        amount: {
+                            currency_code: "USD",
+                            value: "100.00"
+                        },
+                        seller_protection: {
+                            status: "ELIGIBLE",
+                            dispute_categories: [
+                                "ITEM_NOT_RECEIVED",
+                                "UNAUTHORIZED_TRANSACTION"
+                            ]
+                        },
+                        expiration_time: "2018-05-01T21:20:49Z",
+                        create_time: "2018-04-01T21:20:49Z",
+                        update_time: "2018-04-01T21:20:49Z",
+                        links: [
+                            {
+                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S",
+                                rel: "self",
+                                method: "GET"
+                            },
+                            {
+                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/capture",
+                                rel: "capture",
+                                method: "POST"
+                            },
+                            {
+                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/void",
+                                rel: "void",
+                                method: "POST"
+                            },
+                            {
+                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/reauthorize",
+                                rel: "reauthorize",
+                                method: "POST"
+                            }
+                        ]
+                    }
+                ]
+              }
+            });
+          }
+        }).render('#paypal-button-container');
+      </script>
 </body>
