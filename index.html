@@ -11,17 +11,83 @@
     <div id="paypal-button-container"></div>
 
     <script>
-        paypal.Buttons({
-          createOrder: function(data, actions) {
-            // Set up the transaction
-            return actions.order.create({
-              purchase_units: [{
+      paypal.Buttons({
+        createOrder: function(data, actions) {
+          return actions.order.create(
+              {
+              purchase_units: [
+                {
                 amount: {
                   currency_code:"USD",
-                  value: '0.01'
+                  value: '12.00',
+                  items:[
+                    {
+                      name:"product1",
+                      unit_amount:{
+                        currency_code: "USD",
+                        value: "4.00"
+                      },
+                      tax:{
+                        currency_code: "USD",
+                        value: "1.00"
+                      },
+                      quantity:"1",
+                      description:"this is the description for product1",
+                      sku:"0511sku01"
+                    }
+                  ],
+                  breakdown:{
+                                item_total:{
+                                  currency_code: "USD",
+                                  value: "5.00"
+                                },
+                                shipping:{
+                                  currency_code: "USD",
+                                  value: "3.00"
+                                },
+                                handling:{
+                                  currency_code: "USD",
+                                  value: "2.00"
+                                },
+                                tax_total:{
+                                  currency_code: "USD",
+                                  value: "1.30"
+                                },
+                                shipping_discount:{
+                                  currency_code: "USD",
+                                  value: "1.00"
+                                },
+                                insurance:{
+                                  currency_code: "USD",
+                                  value: "1.70"
+                                }
+                              }
                 },
                 payee:{
                     email_address:"yanbaorui1997-facilitator@163.com"
+                },
+                description:"this is the description alskjfghjnvi",//购物详情
+                shipping: {
+                  address: {
+                  address_line_1: "2211 N First Street",
+                  address_line_2: "Building 17",
+                  admin_area_2: "San Jose",
+                  admin_area_1: "CA",
+                  postal_code: "95131",
+                  country_code: "US"
+                  }
+                },
+                payments: {
+                  authorizations: [
+                      {
+                          id: "0AW2184448108334S",
+                          status: "CREATED",//已创建付款
+                          amount: {
+                              currency_code:"USD",
+                              value: '12.00'
+                          }
+                      }
+                  ]
                 }
               }],
               payer: {
@@ -37,71 +103,23 @@
                 //         national_number: "12345678910"
                 //     }
                 // }
-              },
-            //   shipping:{
-            //       name:{
-            //           full_name:"John Doe"
-            //       },
-            //       address:{
-            //         address_line_1:"173 Drury Lane"
-            //       }
-            //   },
-              shipping: {
-                address: {
-                address_line_1: "2211 N First Street",
-                address_line_2: "Building 17",
-                admin_area_2: "San Jose",
-                admin_area_1: "CA",
-                postal_code: "95131",
-                country_code: "US"
-                }
-              },
-              payments: {
-                authorizations: [
-                    {
-                        id: "0AW2184448108334S",
-                        status: "CREATED",
-                        amount: {
-                            currency_code: "USD",
-                            value: "100.00"
-                        },
-                        seller_protection: {
-                            status: "ELIGIBLE",
-                            dispute_categories: [
-                                "ITEM_NOT_RECEIVED",
-                                "UNAUTHORIZED_TRANSACTION"
-                            ]
-                        },
-                        expiration_time: "2018-05-01T21:20:49Z",
-                        create_time: "2018-04-01T21:20:49Z",
-                        update_time: "2018-04-01T21:20:49Z",
-                        links: [
-                            {
-                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S",
-                                rel: "self",
-                                method: "GET"
-                            },
-                            {
-                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/capture",
-                                rel: "capture",
-                                method: "POST"
-                            },
-                            {
-                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/void",
-                                rel: "void",
-                                method: "POST"
-                            },
-                            {
-                                href: "https://api.paypal.com/v2/payments/authorizations/0AW2184448108334S/reauthorize",
-                                rel: "reauthorize",
-                                method: "POST"
-                            }
-                        ]
-                    }
-                ]
               }
-            });
-          }
-        }).render('#paypal-button-container');
-      </script>
+            
+              
+              
+            }
+            );
+          },
+        onApprove: function(data, actions) {
+          // Capture the funds from the transaction
+          return actions.order.capture().then(function(details) {
+            // Show a success message to your buyer
+            alert('Transaction completed by ' + details.payer.name.given_name);
+            alert('payer.email_address ' + details.payer.email_address);
+            console.log(details.payer.address.address_line_1);
+          });
+        }
+      }).render('#paypal-button-container');
+    </script>
+      
 </body>
